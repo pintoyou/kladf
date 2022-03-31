@@ -6,10 +6,30 @@ import { connectors } from "./connectors";
 import { toHex, truncateAddress } from "./utils";
 import { useDisclosure } from "react-use-disclosure";
 import Image from 'next/image'
+import Web3Modal from "web3modal";
+import { providerOptions } from "./providerOptions";
+import { ethers, providers } from "ethers"
+import { WalletLinkConnector } from "@web3-react/walletlink-connector";
+import { WalletConnectConnector } from "@web3-react/walletconnect-connector";
+import { InjectedConnector } from "@web3-react/injected-connector";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
+//  Create WalletConnect Provider
+const provider = new WalletConnectProvider({
+  rpc: {
+    1: "https://mainnet.mycustomnode.com",
+    3: "https://ropsten.mycustomnode.com",
+    100: "https://dai.poa.network",
+    // ...
+  },
+});
 
 
 
-const Wallet = () =>{
+
+
+
+const Wallet = ({ web3Handler })  =>{
   const [showModal, setShowModal] = useState(false);
     const {
       library,
@@ -26,6 +46,10 @@ const Wallet = () =>{
     const [signedMessage, setSignedMessage] = useState("");
     const [verified, setVerified] = useState();
   
+    const setProvider = (type) => {
+      window.localStorage.setItem("provider", type);
+    };
+
     const handleNetwork = (e) => {
       const id = e.target.value;
       setNetwork(Number(id));
@@ -95,11 +119,29 @@ const Wallet = () =>{
       refreshState();
       deactivate();
     };
-  
-    useEffect(() => {
-      const provider = window.localStorage.getItem("provider");
-      if (provider) activate(connectors[provider]);
-    }, []);
+
+   
+
+
+    const CoinbaseWallet = new WalletLinkConnector({
+      url: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
+      appName: "Web3-react Demo",
+      supportedChainIds: [1, 3, 4, 5, 42],
+     });
+     
+     const WalletConnect = new WalletConnectConnector({
+      rpcUrl: `https://mainnet.infura.io/v3/${process.env.INFURA_KEY}`,
+      bridge: "https://bridge.walletconnect.org",
+      qrcode: true,
+     });
+     
+     const Injected = new InjectedConnector({
+      supportedChainIds: [97]
+     });
+
+
+     const web3Provider = new providers.Web3Provider(provider);
+
   
     return (
       
@@ -109,7 +151,7 @@ const Wallet = () =>{
         type="button"
         onClick={() => setShowModal(true)}
       >
-        {active ? <span className="text-white">Connected with <b>{account}</b></span> : <span className="text-white">Not connected</span>}
+        {active ? <span className="text-white"> <b>{account.slice(0, 5) + '...' + account.slice(38, 42)}</b></span> : <span className="text-white">Not connected</span>}
       </button>
       {showModal ? (
         <>
@@ -119,12 +161,13 @@ const Wallet = () =>{
               <button
               variant="outline"
               onClick={() => {
-                activate(connectors.coinbaseWallet);
+                activate(coinbaseWallet);
                 setProvider("coinbaseWallet");
-                closeModal();
+                setShowModal(false);
               }}
-              w="100%"
-            >
+              w="100%">
+              
+            
               <div w="100%" justifyContent="center">
                 <Image
                   src="/cbw.png"
@@ -139,9 +182,9 @@ const Wallet = () =>{
             <button
               variant="outline"
               onClick={() => {
-                activate(connectors.walletConnect);
+                activate(WalletConnect);
                 setProvider("walletConnect");
-                closeModal();
+                setShowModal(false);
               }}
               w="100%"
             >
@@ -158,10 +201,10 @@ const Wallet = () =>{
             </button>
             <button
               variant="outline"
-              onClick={() => {
-                activate(connectors.injected);
+              onClick={(web3Handler) => {
+                activate(Injected);
                 setProvider("injected");
-                closeModal();
+                setShowModal(false);
               }}
               w="100%"
             >

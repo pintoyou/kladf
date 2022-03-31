@@ -1,19 +1,16 @@
+import { useState, useEffect } from 'react'
+import { ethers } from "ethers"
 import Navbar from './Navbar'
 import Card from './Card'
-import Modal from './wallet/Wallet'
-import Mod from './wallet/mod'
 import { StrictMode } from "react";
-import { Web3ReactProvider } from "@web3-react/core";
-
-
-
-
+import { Web3ReactProvider } from '@web3-react/core'
+import { Web3Provider } from "@ethersproject/providers";
 import MarketplaceAbi from '../src/frontend/contractsData/Marketplace.json'
 import MarketplaceAddress from '../src/frontend/contractsData/Marketplace-address.json'
 import NFTAbi from '../src/frontend/contractsData/NFT.json'
 import NFTAddress from '../src/frontend/contractsData/NFT-address.json'
-import { useState } from 'react'
-import { ethers } from "ethers"
+
+
 
 
 function Home () {
@@ -55,19 +52,26 @@ function Home () {
     return library;
   }
   
+  
   return (
       <div>
 
-<StrictMode>
-<Web3ReactProvider getLibrary={getLibrary}>
-  
+
         <Navbar web3Handler={web3Handler} account={account}/>
+
+      
+        <div>
+          {loading ? (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+            
+              <p className='mx-3 my-0'>Awaiting Metamask Connection...</p>
+            </div>
+          ) : (
         <Card marketplace={marketplace} nft={nft}/>
+        )}
+        </div>
        
-       
-       </Web3ReactProvider>
-    
-  </StrictMode>,
+      
       </div>
 
 
