@@ -1,8 +1,46 @@
-import React from "react"
+import { useWeb3React } from "@web3-react/core"
+import { useEffect } from "react"
+import { injected } from "./wallet/connectors"
+import Wallet from './wallet/Wallet'
 
-export default function Header() {
-    return (
-        <>
+export default function Navbar() {
+  const { active, account, library, connector, activate, deactivate } = useWeb3React()
+
+  async function connect() {
+    try {
+      await activate(injected)
+      localStorage.setItem('isWalletConnected', true)
+    } catch (ex) {
+      console.log(ex)
+    }
+  }
+
+  async function disconnect() {
+    try {
+      deactivate()
+      localStorage.setItem('isWalletConnected', false)
+    } catch (ex) {
+      console.log(ex)
+    }
+  }
+
+ 
+  useEffect(() => {
+    const connectWalletOnPageLoad = async () => {
+      if (localStorage?.getItem('isWalletConnected') === 'true') {
+        try {
+          await activate(injected)
+          localStorage.setItem('isWalletConnected', true)
+        } catch (ex) {
+          console.log(ex)
+        }
+      }
+    }
+    connectWalletOnPageLoad()
+  }, [])
+
+        return (
+       
             <div className="bg-black">
                 <div className="container mx-auto h-16 md:h-11 flex items-center justify-center md:justify-between">
                     
@@ -19,21 +57,21 @@ export default function Header() {
                             
                             Giriş Yap
                         </a>
-                        <a href="#" className="flex items-center gap-x-2 text-white transition-all text-opacity-80 hover:text-opacity-100">
-                            
-                            Kayıt Ol
-                        </a>
+                        <Wallet className />
+                        
+    
+            
+                        <div>
+                      
+                        
+                        </div>
+                        
                     </nav>
 
                 </div>
             </div>
-            <div className="container mx-auto flex md:hidden items-center h-10 px-2 justify-between">
-                <div className="flex items-center gap-x-2 text-sm font-semibold text-gray-800">
-                   
-                    Teslimat Adresi Belirle
-                </div>
-               
-            </div>
-        </>
-    )
+          
+        
+  )
 }
+
