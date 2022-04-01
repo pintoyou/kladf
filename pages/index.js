@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { ethers } from "ethers"
 import Navbar from './Navbar'
 import Card from './Card'
+import HoPage from './HoPage'
 import { StrictMode } from "react";
 import { Web3ReactProvider } from '@web3-react/core'
 import { Web3Provider } from "@ethersproject/providers";
@@ -54,13 +55,12 @@ function Home () {
   
   
   return (
-      <div>
+      <div className='bg-body-bg-1 bg-hero-pattern'>
 
-
-        <Navbar web3Handler={web3Handler} account={account}/>
-
-      
-        <div>
+        
+        <Navbar web3Handler={web3Handler} account={account} className="mt-2"/>
+        <HoPage/>
+        <div className='container justify-center'>
           {loading ? (
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
             

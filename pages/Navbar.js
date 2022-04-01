@@ -9,7 +9,7 @@ const Navbar = ({ web3Handler, account }) => {
 
         return (
        
-            <div className="bg-black">
+            <div >
                 <div className="container mx-auto h-16 md:h-11 flex items-center justify-center md:justify-between">
                     
 

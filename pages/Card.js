@@ -49,7 +49,7 @@ const Card = ({ marketplace, nft }) => {
     </main>
   )
   return ( 
-<div className="container  w-[368px] h-[447px] bg-black "> 
+<div className="container  w-[368px] h-[447px]  "> 
 {items.length > 0 ?
 
   
